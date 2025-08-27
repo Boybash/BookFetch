@@ -3,16 +3,20 @@ import styles from "./style.module.css";
 
 const Product = () => {
   let [products, setProducts] = useState([]);
+  const [inputValue, setInputValue] = useState("")
+  const [query, setQuery] = useState("%22chinua%20achebe%22");
   let [error, setError] = useState("");
 
-  const API =
-    "https://www.googleapis.com/books/v1/volumes?q=%22chinua%20achebe%22";
+  const API = `https://www.googleapis.com/books/v1/volumes?q=${query}`;
+  // const API =
+  //   "https://www.googleapis.com/books/v1/volumes?q=%22chinua%20achebe%22";
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         let response = await fetch(API);
         let data = await response.json();
-        setProducts(data.items);
+        setProducts(data.items || []);
         console.log(data.items);
       } catch (error) {
         console.log("Error fetching Data", error);
@@ -20,10 +24,52 @@ const Product = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [query]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setQuery(inputValue)
+
+
+    setInputValue("");
+    console.log("submitted", inputValue);
+
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+
+  // useEffect(() => {
+  //   async function fetchData(){
+  //   try{
+  //     let response = await fetch(API)
+  //     let data = await response.json()
+  //     setProducts(data.items)
+  //     console.log(data.items)
+  //   }catch(error){
+  //     console.log("Error fetching Data", error)
+  //     setError(error)
+  //   }
+  // }
+  // fetchData();
+  // })
+
+  
 
   return (
     <>
+      <form className={styles.searchForm} onSubmit={handleSubmit}>
+        <input 
+          type="text"
+          placeholder="Search books..."
+          value={inputValue}
+          onChange={(e)=> setInputValue(e.target.value)}
+        />
+        <button>Submit</button>
+      </form>
+
       <section className={styles.productContainer}>
         {products.length === 0 ? (
           <p> Product Loading....</p>
@@ -31,7 +77,7 @@ const Product = () => {
           products.map((product) => (
             <div key={product.id} className={styles.productBox}>
               <div className={styles.imageContainer}>
-                <img src={product.volumeInfo.imageLinks.thumbnail} />
+                <img src={product.volumeInfo.imageLinks?.thumbnail} />
               </div>
               <div className={styles.productDetails}>
                 <h1>{product.volumeInfo.title}</h1>
