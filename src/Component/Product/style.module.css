@@ -1,0 +1,12 @@
+.productContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 50px;
+  max-width: 1200px;
+  width: 80%;
+}
+.productBox {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
